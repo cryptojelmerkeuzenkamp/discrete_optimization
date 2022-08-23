@@ -26,14 +26,20 @@ class BranchAndBoundSolver:
         self.queue: List[Solution] = []
 
     def _sort_items(self) -> None:
-        """Sort items based on value to weight ratio."""
+        """Sort items based on value to weight ratio.
+        Returns:
+            None
+        """
         self.sorted_items = sorted(
             self.items, key=lambda x: float(x.value) / float(x.weight), reverse=True
         )
         self.n = len(self.sorted_items)
 
     def _define_values_and_weights(self) -> None:
-        """Extracts values and weights from input."""
+        """Extracts values and weights from input.
+        Returns:
+            None
+        """
         self.values = [item.value for item in self.sorted_items]
         self.weights = [item.weight for item in self.sorted_items]
 
@@ -147,6 +153,7 @@ class BranchAndBoundSolver:
                 self._explore_right(solution, level)
 
     def execute(self) -> Tuple[int, List[int]]:
+        """Execute branch and bound algorithm."""
         # Define initial solution and save in queue
         upperbound = self._calculate_optimistic_estimate(Solution(0, 0, 0, 0, []))
         init_solution = Solution(0, 0, 0, upperbound, [])
