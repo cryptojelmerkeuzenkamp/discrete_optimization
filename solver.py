@@ -3,7 +3,6 @@
 from typing import List
 
 from collections import namedtuple
-from algorithms import simple_fill
 from branch_and_bound import BranchAndBoundSolver
 Item = namedtuple("Item", ['index', 'value', 'weight'])
 

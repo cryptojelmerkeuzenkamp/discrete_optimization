@@ -78,8 +78,7 @@ class BranchAndBoundSolver:
         room = self.capacity - (current_solution.weight + new_item.weight)
         if room < 0:
             return False
-        else:
-            return True
+        return True
 
     def _check_if_solution_is_best(self, solution: Solution):
         """ Compare solution to current best, and """
