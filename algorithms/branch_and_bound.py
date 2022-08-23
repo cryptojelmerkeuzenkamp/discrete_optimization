@@ -1,3 +1,15 @@
+"""Branch and bound implementation.
+
+This module shows an implementation of the branch-and-bound algorithm using the depth-first strategy.
+Within this optimization we relax the integrality constraint since this will reach faster convergence
+compared to the capacity constraint.
+
+You can do an example run by ::
+    $python solver.py ./data/ks_4_0
+
+"""
+
+
 from abc import ABC, abstractmethod
 from collections import namedtuple
 from typing import List, Set, Tuple
@@ -141,7 +153,7 @@ class BranchAndBoundSolver(ABC):
         while self.queue:
             solution = (
                 self.queue.pop()
-            )  # Get the solution that entered the queue first -> depth first
+            )  # Get the solution that entered the queue first (=depth first strategy)
             self._explore_tree(solution=solution)  # Explore solution
 
         return self._get_final_solution()
