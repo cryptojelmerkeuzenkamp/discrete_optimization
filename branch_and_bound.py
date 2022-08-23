@@ -22,7 +22,7 @@ class BranchAndBoundSolver:
         self._define_values_and_weights()
 
         # Define queue with solutions
-        self.q = queue.Queue()
+        self.q = []
 
     def _sort_items(self):
         """ Sort items based on value to weight ratio. """
@@ -107,7 +107,7 @@ class BranchAndBoundSolver:
             # Explore solution further if upperbound is larger than current value,
             # potentially its value can exceed the current optimal value
             if solution.optimistic_estimate > self.optimal_value:
-                self.q.put(solution)
+                self.q.append(solution)
 
     def _explore_right(self, current_solution: Solution, level: int):
         """ Explore right pruned part of current solution. """
@@ -123,7 +123,7 @@ class BranchAndBoundSolver:
         # Explore solution further if upperbound is larger than current value,
         # potentially its value can exceed the current optimal value
         if solution.optimistic_estimate > self.optimal_value:
-            self.q.put(solution)
+            self.q.append(solution)
 
     def _explore_tree(self, solution: Solution):
         """ Explore tree based on previous found values. """
@@ -137,10 +137,10 @@ class BranchAndBoundSolver:
         # Define initial solution and save in queue
         upperbound = self._calculate_optimistic_estimate(Solution(0, 0, 0, 0, []))
         init_solution = Solution(0, 0, 0, upperbound, [])
-        self.q.put(init_solution)
+        self.q.append(init_solution)
 
-        while not self.q.empty():
-            solution = self.q.get()  # Get the solution that entered the queue first
+        while self.q:
+            solution = self.q.pop()  # Get the solution that entered the queue first
             self._explore_tree(solution=solution)  # Explore solution
 
         return self._get_final_solution()
