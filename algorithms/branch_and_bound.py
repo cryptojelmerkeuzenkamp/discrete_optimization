@@ -4,7 +4,6 @@ from typing import List, Set, Tuple
 Solution = namedtuple(
     "Solution", ["level", "value", "weight", "optimistic_estimate", "products"]
 )
-
 Item = namedtuple("Item", ["index", "value", "weight"])
 
 
