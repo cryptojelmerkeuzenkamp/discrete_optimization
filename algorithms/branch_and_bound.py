@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from collections import namedtuple
 from typing import List, Set, Tuple
 
@@ -7,7 +8,7 @@ Solution = namedtuple(
 Item = namedtuple("Item", ["index", "value", "weight"])
 
 
-class BranchAndBoundSolver:
+class BranchAndBoundSolver(ABC):
     def __init__(self, items: List[Item], capacity: int):
         # Define inputs
         self.items = items
@@ -26,42 +27,20 @@ class BranchAndBoundSolver:
         self.queue: List[Solution] = []
 
     def _sort_items(self) -> None:
-        """Sort items based on value to weight ratio.
-        Returns:
-            None
-        """
+        """Sort items based on value to weight ratio."""
         self.sorted_items = sorted(
             self.items, key=lambda x: float(x.value) / float(x.weight), reverse=True
         )
         self.n = len(self.sorted_items)
 
     def _define_values_and_weights(self) -> None:
-        """Extracts values and weights from input.
-        Returns:
-            None
-        """
+        """Extracts values and weights from input."""
         self.values = [item.value for item in self.sorted_items]
         self.weights = [item.weight for item in self.sorted_items]
 
+    @abstractmethod
     def _calculate_optimistic_estimate(self, solution: Solution) -> int:
-        """Calculate upperbound by relaxing integer constraint."""
-        solution_weight = solution.weight
-        # If solution weight exceeds capacity, solution is not feasible and has upperbound 0
-        if solution_weight > self.capacity:
-            return 0
-        j = solution.level
-        estimate = solution.value
-        # Fill knapsack with sorted items until you reach capacity
-        while j < self.n and solution_weight + self.weights[j] <= self.capacity:
-            estimate += self.values[j]
-            solution_weight += self.weights[j]
-            j += 1
-        # Fill remaining part with fraction left
-        if j < self.n:
-            estimate += (self.capacity - solution_weight) * (
-                self.values[j] / self.weights[j]
-            )
-        return estimate
+        pass
 
     def _set_solution(
         self, level: int, value: int, weight: List[int], products: List[int]
