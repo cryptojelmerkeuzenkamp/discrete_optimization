@@ -1,6 +1,5 @@
 from typing import List
 from collections import namedtuple
-import queue
 
 Solution = namedtuple('Solution', ['level', 'value', 'weight', 'optimistic_estimate', 'products'])
 
@@ -140,7 +139,7 @@ class BranchAndBoundSolver:
         self.q.append(init_solution)
 
         while self.q:
-            solution = self.q.pop()  # Get the solution that entered the queue first
+            solution = self.q.pop()  # Get the solution that entered the queue first -> depth first
             self._explore_tree(solution=solution)  # Explore solution
 
         return self._get_final_solution()
