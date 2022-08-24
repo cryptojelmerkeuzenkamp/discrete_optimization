@@ -1,3 +1,16 @@
+"""Knapsack solvers for the well known Knapsack Problem.
+
+This module shows different implementations of Knapsack solvers.
+So far implemented:
+
+    - Brand-and-Bound with capacity constraint relaxation.
+    - Brand-and-Bound with integrality constraint relaxation.
+
+You can do an example run by, for example, ::
+    $value, taken = BranchBoundIntegralityConstraint(items, capacity).execute()
+
+"""
+
 from typing import List, Union
 
 import numpy as np
@@ -6,7 +19,7 @@ from algorithms.branch_and_bound import BranchAndBoundSolver, Item, Solution
 
 
 class BranchBoundCapacityConstraint(BranchAndBoundSolver):
-    def __init__(self, items: List[Item], capacity: int):
+    def __init__(self, items: List[Item], capacity: int) -> None:
         super().__init__(items, capacity)
         self.cumsum_value = np.insert(np.cumsum([value for value in self.values]), 0, 0)
 
