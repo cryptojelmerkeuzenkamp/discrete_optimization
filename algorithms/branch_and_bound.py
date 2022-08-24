@@ -12,7 +12,7 @@ You can do an example run by ::
 
 from abc import ABC, abstractmethod
 from collections import namedtuple
-from typing import List, Set, Tuple
+from typing import List, Set, Tuple, Union
 
 Solution = namedtuple(
     "Solution", ["level", "value", "weight", "optimistic_estimate", "products"]
@@ -51,7 +51,7 @@ class BranchAndBoundSolver(ABC):
         self.weights = [item.weight for item in self.sorted_items]
 
     @abstractmethod
-    def _calculate_optimistic_estimate(self, solution: Solution) -> int:
+    def _calculate_optimistic_estimate(self, solution: Solution) -> Union[int, float]:
         pass
 
     def _set_solution(

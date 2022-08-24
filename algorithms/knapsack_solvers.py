@@ -1,18 +1,26 @@
+from typing import List, Union
+
 import numpy as np
-from branch_and_bound import BranchAndBoundSolver, Solution
+
+from algorithms.branch_and_bound import BranchAndBoundSolver, Item, Solution
 
 
-class UpperBoundCalculator(BranchAndBoundSolver):
-    def _calculate_optimistic_estimate_simple(self, solution: Solution) -> int:
-        """Calculate upperbound by relaxing capacity constraint."""
+class BranchBoundCapacityConstraint(BranchAndBoundSolver):
+    def __init__(self, items: List[Item], capacity: int):
+        super().__init__(items, capacity)
         self.cumsum_value = np.insert(np.cumsum([value for value in self.values]), 0, 0)
+
+    def _calculate_optimistic_estimate(self, solution: Solution) -> int:
+        """Calculate upperbound by relaxing capacity constraint."""
         next_item_idx = solution.level
         estimate: int = (
             solution.weight + self.cumsum_value[-1] - self.cumsum_value[next_item_idx]
         )
         return estimate
 
-    def _calculate_optimistic_estimate(self, solution: Solution) -> int:
+
+class BranchBoundIntegralityConstraint(BranchAndBoundSolver):
+    def _calculate_optimistic_estimate(self, solution: Solution) -> Union[int, float]:
         """Calculate upperbound by relaxing integrality constraint."""
         solution_weight = solution.weight
         # If solution weight exceeds capacity, solution is not feasible and has upperbound 0
