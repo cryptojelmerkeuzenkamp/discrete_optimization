@@ -149,7 +149,7 @@ class BranchAndBoundSolver(ABC):
         while self.queue:
             solution = (
                 self.queue.pop()
-            )  # Get the solution that entered the queue first (=depth first strategy)
+            )  # Get the solution that last entered the queue (=depth first strategy)
             self._explore_tree(solution=solution)  # Explore solution
 
         return self._get_final_solution()

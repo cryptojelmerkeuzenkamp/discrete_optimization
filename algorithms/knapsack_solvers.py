@@ -52,3 +52,6 @@ class BranchBoundIntegralityConstraint(BranchAndBoundSolver):
                 self.values[j] / self.weights[j]
             )
         return estimate
+
+
+# TODO -> define abstractions for search strategy -> replaces the execute function
