@@ -139,17 +139,7 @@ class BranchAndBoundSolver(ABC):
                 self._explore_left(solution, level)
                 self._explore_right(solution, level)
 
+    @abstractmethod
     def execute(self) -> Tuple[int, List[int]]:
         """Execute branch and bound algorithm."""
-        # Define initial solution and save in queue
-        upperbound = self._calculate_optimistic_estimate(Solution(0, 0, 0, 0, []))
-        init_solution = Solution(0, 0, 0, upperbound, [])
-        self.queue.append(init_solution)
-
-        while self.queue:
-            solution = (
-                self.queue.pop()
-            )  # Get the solution that last entered the queue (=depth first strategy)
-            self._explore_tree(solution=solution)  # Explore solution
-
-        return self._get_final_solution()
+        pass

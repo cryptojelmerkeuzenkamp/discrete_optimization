@@ -11,14 +11,34 @@ You can do an example run by, for example, ::
 
 """
 
-from typing import List, Union
+from typing import List, Tuple, Union
 
 import numpy as np
 
 from algorithms.branch_and_bound import BranchAndBoundSolver, Item, Solution
 
 
-class BranchBoundCapacityConstraint(BranchAndBoundSolver):
+class DepthFirstSolver(BranchAndBoundSolver):
+    def _calculate_optimistic_estimate(self, solution: Solution) -> Union[int, float]:
+        pass
+
+    def execute(self) -> Tuple[int, List[int]]:
+        """Execute branch and bound algorithm."""
+        # Define initial solution and save in queue
+        upperbound = self._calculate_optimistic_estimate(Solution(0, 0, 0, 0, []))
+        init_solution = Solution(0, 0, 0, upperbound, [])
+        self.queue.append(init_solution)
+
+        while self.queue:
+            solution = (
+                self.queue.pop()
+            )  # Get the solution that last entered the queue (=depth first strategy)
+            self._explore_tree(solution=solution)  # Explore solution
+
+        return self._get_final_solution()
+
+
+class BranchBoundCapacityConstraint(DepthFirstSolver):
     def __init__(self, items: List[Item], capacity: int) -> None:
         super().__init__(items, capacity)
         self.cumsum_value = np.insert(np.cumsum([value for value in self.values]), 0, 0)
@@ -32,7 +52,7 @@ class BranchBoundCapacityConstraint(BranchAndBoundSolver):
         return estimate
 
 
-class BranchBoundIntegralityConstraint(BranchAndBoundSolver):
+class BranchBoundIntegralityConstraint(DepthFirstSolver):
     def _calculate_optimistic_estimate(self, solution: Solution) -> Union[int, float]:
         """Calculate upperbound by relaxing integrality constraint."""
         solution_weight = solution.weight
@@ -52,6 +72,3 @@ class BranchBoundIntegralityConstraint(BranchAndBoundSolver):
                 self.values[j] / self.weights[j]
             )
         return estimate
-
-
-# TODO -> define abstractions for search strategy -> replaces the execute function
