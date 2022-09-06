@@ -3,7 +3,7 @@
 from collections import namedtuple
 from typing import List
 
-from algorithms.knapsack_solvers import BranchBoundIntegralityConstraint
+from algorithms.knapsack_solvers import BranchBoundIntegralityConstraintDepthFirst
 
 Item = namedtuple("Item", ["index", "value", "weight"])
 
@@ -37,7 +37,7 @@ def solve_it(input_data: str):
     capacity, items = _parse_input(input_data)
 
     # Branch and Bound
-    value, taken = BranchBoundIntegralityConstraint(items, capacity).execute()
+    value, taken = BranchBoundIntegralityConstraintDepthFirst(items, capacity).execute()
 
     # Parse output
     output_data = _parse_output(value, taken)

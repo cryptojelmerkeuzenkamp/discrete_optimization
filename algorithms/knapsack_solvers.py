@@ -11,34 +11,32 @@ You can do an example run by, for example, ::
 
 """
 
-from typing import List, Tuple, Union
+from typing import List, Union
 
 import numpy as np
 
 from algorithms.branch_and_bound import BranchAndBoundSolver, Item, Solution
 
 
+class BestFirstSolver(BranchAndBoundSolver):
+    @staticmethod
+    def sort_helper_best_first(sol: Solution) -> int:
+        return sol.optimistic_estimate
+
+    def _sort_solution_queue(self) -> None:
+        self.queue.sort(key=self.sort_helper_best_first)
+
+
 class DepthFirstSolver(BranchAndBoundSolver):
-    def _calculate_optimistic_estimate(self, solution: Solution) -> Union[int, float]:
-        pass
+    @staticmethod
+    def sort_helper_depth_first(sol: Solution) -> int:
+        return sol.level
 
-    def execute(self) -> Tuple[int, List[int]]:
-        """Execute branch and bound algorithm."""
-        # Define initial solution and save in queue
-        upperbound = self._calculate_optimistic_estimate(Solution(0, 0, 0, 0, []))
-        init_solution = Solution(0, 0, 0, upperbound, [])
-        self.queue.append(init_solution)
-
-        while self.queue:
-            solution = (
-                self.queue.pop()
-            )  # Get the solution that last entered the queue (=depth first strategy)
-            self._explore_tree(solution=solution)  # Explore solution
-
-        return self._get_final_solution()
+    def _sort_solution_queue(self) -> None:
+        self.queue.sort(key=self.sort_helper_depth_first)
 
 
-class BranchBoundCapacityConstraint(DepthFirstSolver):
+class BranchBoundCapacityConstraint(BranchAndBoundSolver):
     def __init__(self, items: List[Item], capacity: int) -> None:
         super().__init__(items, capacity)
         self.cumsum_value = np.insert(np.cumsum([value for value in self.values]), 0, 0)
@@ -52,7 +50,7 @@ class BranchBoundCapacityConstraint(DepthFirstSolver):
         return estimate
 
 
-class BranchBoundIntegralityConstraint(DepthFirstSolver):
+class BranchBoundIntegralityConstraint(BranchAndBoundSolver):
     def _calculate_optimistic_estimate(self, solution: Solution) -> Union[int, float]:
         """Calculate upperbound by relaxing integrality constraint."""
         solution_weight = solution.weight
@@ -72,3 +70,28 @@ class BranchBoundIntegralityConstraint(DepthFirstSolver):
                 self.values[j] / self.weights[j]
             )
         return estimate
+
+
+# Define all strategy classes
+class BranchBoundCapacityConstraintDepthFirst(
+    BranchBoundCapacityConstraint, DepthFirstSolver
+):
+    pass
+
+
+class BranchBoundCapacityConstraintBestFirst(
+    BranchBoundCapacityConstraint, BestFirstSolver
+):
+    pass
+
+
+class BranchBoundIntegralityConstraintBestFirst(
+    BranchBoundIntegralityConstraint, BestFirstSolver
+):
+    pass
+
+
+class BranchBoundIntegralityConstraintDepthFirst(
+    BranchBoundIntegralityConstraint, DepthFirstSolver
+):
+    pass
